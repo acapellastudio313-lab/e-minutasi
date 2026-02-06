@@ -1,81 +1,74 @@
 import React, { useState } from 'react';
-import './App.css';
 
 function App() {
   const [jenis, setJenis] = useState('Gugatan');
   const [isMinutasi, setIsMinutasi] = useState(false);
 
+  // Gaya CSS Langsung (Internal) agar 100% Berhasil di Vercel
+  const style = {
+    container: { padding: '20px', fontFamily: 'Arial', maxWidth: '800px', margin: 'auto' },
+    card: { border: '1px solid #ddd', padding: '20px', borderRadius: '10px', marginBottom: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
+    formGroup: { marginBottom: '15px' },
+    table: { width: '100%', borderCollapse: 'collapse' as const, marginTop: '20px' },
+    th: { border: '1px solid #ddd', padding: '10px', background: '#f4f4f4' },
+    td: { border: '1px solid #ddd', padding: '10px' },
+    btnSudah: { background: '#28a745', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer' },
+    btnBelum: { background: '#dc3545', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer' },
+    location: { background: '#f9f9f9', padding: '15px', borderRadius: '8px', marginTop: '20px', border: '1px dashed #ccc' }
+  };
+
   return (
-    <div className="container">
-      <h1>E-Minutasi Perkara</h1>
+    <div style={style.container}>
+      <h1 style={{ textAlign: 'center' }}>E-Minutasi Digital</h1>
       
-      {/* BAGIAN ATAS: INPUT UTAMA */}
-      <div className="card">
-        <button className="qr-button">Scan QR Code</button>
-        <div className="form-group">
-          <label>No. Perkara :</label>
-          <input type="text" placeholder="Masukkan nomor..." />
+      <div style={style.card}>
+        <button style={{ background: '#007bff', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', marginBottom: '15px' }}>Scan QR Code</button>
+        <div style={style.formGroup}>
+          <label>No. Perkara: </label>
+          <input type="text" placeholder="Masukkan nomor..." style={{ width: '100%', padding: '8px' }} />
         </div>
-        <div className="form-group">
-          <label>Jenis Perkara :</label>
-          <select value={jenis} onChange={(e) => setJenis(e.target.value)}>
+        <div style={style.formGroup}>
+          <label>Jenis Perkara: </label>
+          <select value={jenis} onChange={(e) => setJenis(e.target.value)} style={{ width: '100%', padding: '8px' }}>
             <option value="Gugatan">Gugatan</option>
             <option value="Permohonan">Permohonan</option>
           </select>
         </div>
-        <div className="form-group">
-          <label>Tahun Perkara :</label>
-          <input type="number" placeholder="2026" />
-        </div>
       </div>
 
-      <hr />
+      <h2>Detail {jenis}</h2>
+      <table style={style.table}>
+        <thead>
+          <tr>
+            <th style={style.th}>No. Perkara</th>
+            {jenis === 'Gugatan' && <th style={style.th}>Para Pihak</th>}
+            <th style={style.th}>Tgl Putus</th>
+            <th style={style.th}>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style={style.td}>123/Pdt.{jenis[0]}/2026</td>
+            {jenis === 'Gugatan' && <td style={style.td}>Pihak A vs Pihak B</td>}
+            <td style={style.td}>06/02/2026</td>
+            <td style={style.td}>
+              <button onClick={() => setIsMinutasi(!isMinutasi)} style={isMinutasi ? style.btnSudah : style.btnBelum}>
+                {isMinutasi ? "Sudah Minutasi" : "Belum Minutasi"}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      {/* BAGIAN TENGAH: DETAIL BERDASARKAN JENIS */}
-      <h2>Detail Data {jenis}</h2>
-      <div className="table-responsive">
-        <table className="info-table">
-          <thead>
-            <tr>
-              <th>No. Perkara</th>
-              <th>Klasifikasi</th>
-              {jenis === 'Gugatan' && <th>Para Pihak</th>}
-              <th>Tgl. Putus</th>
-              {jenis === 'Gugatan' && <th>Tgl. BHT</th>}
-              <th>Status Minutasi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>123/Pdt.{jenis === 'Gugatan' ? 'G' : 'P'}/2026</td>
-              <td>Contoh Klasifikasi</td>
-              {jenis === 'Gugatan' && <td>Pihak A vs Pihak B</td>}
-              <td>01/02/2026</td>
-              {jenis === 'Gugatan' && <td>15/02/2026</td>}
-              <td>
-                <button 
-                  onClick={() => setIsMinutasi(!isMinutasi)}
-                  className={isMinutasi ? "btn-sudah" : "btn-belum"}
-                >
-                  {isMinutasi ? "Sudah Minutasi" : "Belum Minutasi"}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* BAGIAN BAWAH: LOKASI ARSIP (Hanya muncul jika "Sudah Minutasi") */}
       {isMinutasi && (
-        <div className="location-card animated-fade-in">
+        <div style={style.location}>
           <h3>📍 Lokasi Arsip Fisik</h3>
-          <div className="grid-location">
-            <div><label>No. Ruang</label><input type="text" /></div>
-            <div><label>No. Lemari/Rak</label><input type="text" /></div>
-            <div><label>No. Tingkat/Laci</label><input type="text" /></div>
-            <div><label>No. Box</label><input type="text" /></div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <input placeholder="No. Ruang" style={{ padding: '8px' }} />
+            <input placeholder="No. Rak" style={{ padding: '8px' }} />
+            <input placeholder="No. Laci" style={{ padding: '8px' }} />
+            <input placeholder="No. Box" style={{ padding: '8px' }} />
           </div>
-          <button className="pdf-button">📄 Scan / Lihat PDF</button>
         </div>
       )}
     </div>
